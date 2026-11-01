@@ -1,6 +1,6 @@
 # DevOnboard XR
 
-Projeto MVP desenvolvido em 24 horas para portfólio profissional, focado na demonstração de competências para a posição de LLM Full Stack Engineer Manager.
+Projeto MVP desenvolvido em 24 horas para portfólio profissional.
 
 ## Conceito
 A experiência consiste em um galo caminhando pelo Porto do Rio de Janeiro que entra em um prédio representando uma empresa fictícia. Lá dentro, o personagem inicia seu onboarding interagindo com um assistente corporativo baseado em IA. 

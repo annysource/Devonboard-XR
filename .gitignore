@@ -107,3 +107,40 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Segredos e Variáveis de Ambiente (CRÍTICO: Protege sua chave do Gemini)
+.env
+
+# Ambientes virtuais do Python (Impede o upload de milhares de arquivos de bibliotecas)
+venv/
+env/
+backend/venv/
+
+# Arquivos compilados do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Arquivos de log e cache do sistema operacional
+*.log
+.DS_Store
+Thumbs.db
+
+
+# Forçar bloqueio do Unity em qualquer subpasta
+**/Library/
+**/Temp/
+**/Logs/
+**/obj/
+**/Build/
+**/Builds/
+
+# Bloqueio absoluto das pastas pesadas do Unity
+unity/Library/
+unity/Temp/
+unity/Logs/
+unity/obj/
+unity/Build/
+unity/Builds/
+unity/UserSettings/
