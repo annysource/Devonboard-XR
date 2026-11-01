@@ -4,6 +4,7 @@ import importlib.util
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Dict, Any
 
 # --- Importação dinâmica do módulo agent_core ---
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,20 +23,23 @@ app = FastAPI(
 )
 
 # --- Configuração de Segurança CORS ---
-# Permite que o frontend (React) em localhost comunique com a API
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # No MVP permitimos de qualquer origem. Em produção seria apenas o URL do React.
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# -------------------------------------
 
-# Modelo para validar os dados recebidos no chat
+# --- Modelos Pydantic (Validação de Dados) ---
 class ChatMessage(BaseModel):
     message: str
 
+class GameEvent(BaseModel):
+    event_name: str
+    event_data: Dict[str, Any] = {}
+
+# --- Endpoints da API ---
 @app.get("/health")
 def health_check():
     """Verifica se a API está a funcionar corretamente."""
@@ -49,6 +53,24 @@ def start_onboarding():
         "step": "entrada_predio",
         "message": "O onboarding começou. O galo entrou no edifício fictício."
     }
+
+# NOVO: Endpoint para verificar o progresso
+@app.get("/onboarding/progress")
+def get_progress():
+    """Devolve a etapa atual do onboarding."""
+    # Futuramente, isto consultará uma base de dados ou a memória do agente
+    return {
+        "status": "in_progress",
+        "current_step": "entrada_predio",
+        "progress_percentage": 10
+    }
+
+# NOVO: Endpoint para telemetria do Unity
+@app.post("/events")
+def register_event(event: GameEvent):
+    """Recebe eventos do Unity (ex: movimento, interações) para telemetria e observabilidade."""
+    # Futuramente, ligaremos isto ao Prometheus/Grafana
+    return {"status": "success", "registered_event": event.event_name}
 
 @app.post("/onboarding/chat")
 def chat_with_agent(payload: ChatMessage):
