@@ -2,35 +2,45 @@ import os
 from google import genai
 from dotenv import load_dotenv
 
-# Carrega o .env forçando o caminho absoluto da pasta ai-agent
+# Carrega o .env forçando o caminho absoluto
 env_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), '.env')
 load_dotenv(dotenv_path=env_path)
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 if not GEMINI_API_KEY or GEMINI_API_KEY == "sua_chave_aqui":
-    print("AVISO: Chave da API do Gemini não configurada no .env!")
+    print("AVISO: Chave da API não configurada no .env!")
 
 # Inicializa o cliente do novo SDK
 client = genai.Client(api_key=GEMINI_API_KEY)
 
 def get_onboarding_response(user_message: str) -> str:
-    """Função central do agente para processar o onboarding, com fallback para 503."""
-    prompt = f"Você é o assistente de onboarding de uma empresa. O novo funcionário é um galo. Responda de forma corporativa e receptiva à mensagem: '{user_message}'"
+    """Função central do agente com RAG simplificado (Manual da Empresa)."""
+    
+    system_context = """
+    Você é o 'Guia DevOnboard', o assistente virtual de onboarding da empresa DevOnboard. 
+    O jogador é um novo funcionário (humano) recém-contratado. Seja corporativo, profissional e prestativo.
+    
+    MANUAL DA EMPRESA (Use APENAS estas informações para guiar o jogador):
+    1. Missão 1: O jogador deve primeiro retirar o crachá de acesso na Recepção.
+    2. Missão 2: A regra de segurança digital da empresa é: "Nunca cole senhas em post-its no monitor".
+    3. Missão 3: A sala da equipe fica no final do corredor principal, à direita.
+    
+    Regra estrita: Não invente andares, salas ou regras que não estejam neste manual.
+    """
+    
+    prompt = f"{system_context}\n\nMensagem do funcionário: '{user_message}'\nResposta do assistente:"
     
     try:
-        # Tenta a chamada real à API
         response = client.models.generate_content(
             model='gemini-flash-latest',
             contents=prompt,
         )
         return response.text
     except Exception as e:
-        # Se der erro 503 ou qualquer outro, usamos o Mock para não atrasar o projeto
         print(f"\n[AVISO] API real indisponível ({e}). A usar MOCK...\n")
-        return "Bem-vindo à nossa empresa, Sr. Galo! Sou o seu assistente de onboarding. Registámos a sua entrada no edifício. Por favor, dirija-se à receção para levantar o seu crachá e iniciar a sua jornada connosco."
+        return "Os sistemas estão instáveis, mas a regra é clara: vá à recepção pegar seu crachá para começarmos o seu onboarding."
 
-# Bloco de teste
 if __name__ == "__main__":
     print("A testar o agente isoladamente...")
-    resposta = get_onboarding_response("Olá, acabei de chegar no prédio.")
+    resposta = get_onboarding_response("Onde fica minha sala?")
     print(f"Assistente: {resposta}")

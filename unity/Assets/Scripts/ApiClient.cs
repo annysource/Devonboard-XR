@@ -6,12 +6,12 @@ using UnityEngine.Networking;
 public class ApiClient : MonoBehaviour
 {
     private string apiUrl = "http://127.0.0.1:8000";
+    public PlayerGuiaUI playerGuia; // Referência para a UI flutuante
 
     void Start()
     {
-        // Testa a ligação e depois envia uma mensagem de teste do galo
         StartCoroutine(CheckHealth());
-        StartCoroutine(SendChatMessage("Olá, cheguei ao edifício para o meu onboarding!"));
+        StartCoroutine(SendChatMessage("Onde fica a minha sala?"));
     }
 
     IEnumerator CheckHealth()
@@ -19,21 +19,19 @@ public class ApiClient : MonoBehaviour
         using (UnityWebRequest webRequest = UnityWebRequest.Get(apiUrl + "/health"))
         {
             yield return webRequest.SendWebRequest();
-
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
-            {
-                Debug.LogError("Erro ao contactar a API (/health): " + webRequest.error);
-            }
-            else
-            {
-                Debug.Log("Health OK: " + webRequest.downloadHandler.text);
-            }
+            if (webRequest.result != UnityWebRequest.Result.Success)
+                Debug.LogError("Erro: " + webRequest.error);
         }
+    }
+
+    // Novo método público para ser chamado pelos Triggers
+    public void EnviarMensagemParaIA(string mensagem)
+    {
+        StartCoroutine(SendChatMessage(mensagem));
     }
 
     IEnumerator SendChatMessage(string userMessage)
     {
-        // Cria o objeto JSON no formato esperado pelo Pydantic (ChatMessage)
         string jsonBody = JsonUtility.ToJson(new ChatPayload { message = userMessage });
 
         using (UnityWebRequest webRequest = new UnityWebRequest(apiUrl + "/onboarding/chat", "POST"))
@@ -45,21 +43,29 @@ public class ApiClient : MonoBehaviour
 
             yield return webRequest.SendWebRequest();
 
-            if (webRequest.result == UnityWebRequest.Result.ConnectionError || webRequest.result == UnityWebRequest.Result.ProtocolError)
+            if (webRequest.result == UnityWebRequest.Result.Success)
             {
-                Debug.LogError("Erro no chat da API: " + webRequest.error);
-            }
-            else
-            {
-                Debug.Log("Resposta da IA no Unity: " + webRequest.downloadHandler.text);
+                // Extrai apenas o texto da resposta ignorando as chaves do JSON
+                ChatResponse jsonResponse = JsonUtility.FromJson<ChatResponse>(webRequest.downloadHandler.text);
+
+                if (playerGuia != null)
+                {
+                    playerGuia.ExibirFala(jsonResponse.response);
+                }
             }
         }
     }
 }
 
-// Classe auxiliar para serializar o payload do chat
 [Serializable]
 public class ChatPayload
 {
     public string message;
+}
+
+// Nova classe para mapear a resposta do FastAPI: {"response": "texto..."}
+[Serializable]
+public class ChatResponse
+{
+    public string response;
 }

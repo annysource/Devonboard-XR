@@ -1,32 +1,16 @@
 # DevOnboard XR
 
-Projeto MVP desenvolvido em 24 horas para portfólio profissional.
+Plataforma de onboarding interativo para desenvolvedores, com experiência em realidade virtual no Meta Quest 3 e integração com inteligência artificial.
 
-## Conceito
-A experiência consiste em um galo caminhando pelo Porto do Rio de Janeiro que entra em um prédio representando uma empresa fictícia. Lá dentro, o personagem inicia seu onboarding interagindo com um assistente corporativo baseado em IA. 
+O projeto reúne desenvolvimento backend, frontend e integração de serviços, explorando uma arquitetura modular e boas práticas de engenharia de software.
 
-O projeto é desenvolvido em Unity para demonstração via Desktop e VR.
+**O que foi desenvolvido:**
+- API REST em Python com FastAPI, documentação OpenAPI e rotas para onboarding, progresso e telemetria.
+- Integração com Google Gemini para interação com IA, incluindo gerenciamento de credenciais e fallback automático para Mock em caso de indisponibilidade do serviço.
+- Painel web desenvolvido com React, TypeScript e Vite.
+- Testes automatizados de API com Pytest.
+- Organização em monorepo, gerenciamento de dependências e versionamento com Git.
 
-## Stack Tecnológico
+**Tecnologias:** Python, FastAPI, Google Gemini, React, TypeScript, Vite, Pytest e Meta Quest 3.
 
-**Frontend**
-- React e TypeScript.
-
-**XR e Game Engine**
-- Unity e C#.
-
-**Backend e API**
-- Python e FastAPI.
-
-**Inteligência Artificial**
-- Gemini API.
-- LangGraph (Agentes).
-- RAG (Recuperação de conhecimento documental).
-
-**Testes e Observabilidade**
-- Pytest e HTTPX (Testes automatizados e de API).
-- Prometheus e Grafana (Métricas e Dashboards).
-- k6 (Testes de carga e performance).
-
-**Infraestrutura**
-- Docker e Docker Compose.
+Projeto prático de desenvolvimento full-stack, integração de sistemas e aplicação de IA em experiências interativas.
